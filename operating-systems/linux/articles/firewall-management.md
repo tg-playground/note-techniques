@@ -32,15 +32,17 @@ firewall-cmd --list-all
 
 **iptables** is an application that allows users to configure specific rules that will be enforced by the kernel’s `netfilter` framework. It acts as a packet filter and firewall that examines and directs traffic based on port, protocol and other criteria. This guide will focus on the configuration and application of iptables rulesets and will provide examples of ways they are commonly used.
 
+```shell
+# check iptables rules
+iptables -L
 ```
+
+```shell
 ## set default policies to let everything in
 ip6tables --policy INPUT   ACCEPT;
 ip6tables --policy OUTPUT  ACCEPT;
 ip6tables --policy FORWARD ACCEPT;
-## set default policies to let everything in
-iptables --policy INPUT   ACCEPT;
-iptables --policy OUTPUT  ACCEPT;
-iptables --policy FORWARD ACCEPT;
+
 ## start fresh
 ip6tables -Z; # zero counters
 ip6tables -F; # flush (delete) rules
