@@ -8,43 +8,56 @@
 
 ```shell
 [Unit]
-Description=ROT13 demo service
-After=network.target
-StartLimitIntervalSec=0
+Description=demo service
+After=syslog.target network.target
 
 [Service]
 Type=simple
-Restart=always
-RestartSec=1
 User=centos
 ExecStart=/usr/bin/env php /path/to/server.php
+Restart=always
+RestartSec=1
+StartLimitBurst=5
+StartLimitIntervalSec=0
 
 [Install]
 WantedBy=multi-user.target
 ```
 
-- Configuration options
+Configuration options
 
-`After`:  It simply means that your service must be started *after* the network is ready. If your program expects the MySQL server to be up and running, you should add `After=mysqld.service`
+- Unit 
+  - `Description`
+  - `After`:  It simply means that your service must be started *after* the network is ready. If your program expects the MySQL server to be up and running, you should add `After=mysqld.service`
+  - `Requires`: Specifying hard dependencies.
+  - `Wants`: Declaring "soft" dependencies.
+- Service section:  specify things as the command to be executed when the service is started, or the type of the service itself. 
+  - `Type`: simple, forking, oneshot, dbus, notify
+  - `User`
+  - Starting, stopping, and reloading a service
+    - `EnvironmentFile`: The service’s confi guration fi le.
+    - `ExecStartPre`
+    - `ExecStart`: The command used to start this service.
+    - `ExecStop`
+    - `ExecStartPost`
+    - `ExecReload`: The command used to reload this service.
+  - Set process timeouts
+    - `Restart`: By default, systemd does not restart your service if the program exits for whatever reason. This is usually not what you want for a service that must be always available, so we’re instructing it to always restart on exit. `Restart=always``
+    - `RestartSec`: By default, systemd attempts a restart after 100ms. You can specify the number of seconds to wait before attempting a restart, using `RestartSec=1`. It’s a good idea to set `RestartSec` to at least 1 second though, to avoid putting too much stress on your server when things start going wrong.
+    - `StartLimitBurst=5`, `StartLimitIntervalSec=10`, `StartLimitBurst`: when you configure `Restart=always` as we did, **systemd gives up restarting your service if it fails to start more than 5 times within a 10 seconds interval**.
+- Install section: Similarly to what happens with the `Requires` and `Wants` options in the `[Unit]` section, to establish dependencies, in the `[install]` section, we can use `RequiredBy` and `WantedBy`. In both cases we declare a list of units which depend on the one we are configuring
+  - `WantedBy`: The target unit this service belongs to. when the multi-user.target unit is activated, the service unit is started.
 
-`Restart`: By default, systemd does not restart your service if the program exits for whatever reason. This is usually not what you want for a service that must be always available, so we’re instructing it to always restart on exit. `Restart=always`
-
-`RestartSec`: By default, systemd attempts a restart after 100ms. You can specify the number of seconds to wait before attempting a restart, using `RestartSec=1`. It’s a good idea to set `RestartSec` to at least 1 second though, to avoid putting too much stress on your server when things start going wrong.
-
-`StartLimitBurst`: when you configure `Restart=always` as we did, **systemd gives up restarting your service if it fails to start more than 5 times within a 10 seconds interval**. `StartLimitBurst=5
-StartLimitIntervalSec=10`
 
 
 
-- Start Service
+Start Service
 
 ```shell
 $ systemctl start <service_name>
 ```
 
-
-
-- Service automatically start on boot
+Service automatically start on boot
 
 ```shell
 $ systemctl enable <service_name>
