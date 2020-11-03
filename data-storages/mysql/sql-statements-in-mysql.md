@@ -3,7 +3,7 @@
 - Basics
 - [Data Definition Statements](#Data Definition Statements) (DDL)
   - create, alter, drop, rename, truncate, comment
-- Data Query Statements (DQL)
+- [Data Query Statements](#Data Query Statements) (DQL)
   - select
 - Data Manipulation Statements (DML)
   - insert, update, delete, merge, call, explain plan, lock table
@@ -102,5 +102,40 @@ Unique Key
 
 ```sql
 ALTER TABLE table_name ADD CONSTRAINT fk_name UNIQUE (column_name_list);
+```
+
+
+
+## Data Query Statements
+
+
+
+### Multiple Levels Structure  Query
+
+**Unfixed Levels**
+
+every level records using a SQL query
+
+```
+for (int i = 0; i < max_times_request; i++){
+	executeSQL(rootId)
+}
+```
+
+```
+select * from {table} where parent_id in (...)
+```
+
+Setting a max request times to prevent dead loop.
+
+**Fixed Levels**
+
+Only one SQL query. For example, three levels structure query: 
+
+```
+select * from {table} as a 
+left join {table} as b on a.id=b.parent_id
+left join {table} as c on b.id=c.parent_id
+where a.id = {value}
 ```
 
