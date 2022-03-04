@@ -4,7 +4,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
     <Properties>
-        <Property name="my_pattern">%d [%t] %-5level %logger{36} - %msg%n</Property>
+        <Property name="my_pattern">%style{%d}{red} %style{[%t]}{Green} %highlight{%-5level}{STYLE=Logback} %style{%c{1.}.%M:%L}{cyan}\n - %msg%n</Property>
         <Property name="filename">app.log</Property>
     </Properties>
     <Appenders>
@@ -31,7 +31,7 @@
 
 ```xml
 <Properties>
-    <Property name="my_pattern">%d [%t] %-5level %logger{36} - %msg%n</Property>
+    <Property name="my_pattern">%style{%d}{red} %style{[%t]}{Green} %highlight{%-5level}{STYLE=Logback} %style{%c{1.}.%M:%L}{cyan}\n - %msg%n</Property>
     <Property name="filename">app.log</Property>
 </Properties>
 ```
